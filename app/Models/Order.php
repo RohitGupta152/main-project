@@ -46,7 +46,7 @@ class Order extends Model
         'user_id',
         'order_no',
         'customer_name',
-        // 'email',
+        'email',
         'contact_no',
         'address1',
         'address2',
