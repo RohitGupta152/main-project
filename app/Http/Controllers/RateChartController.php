@@ -8,6 +8,7 @@ use App\Http\Requests\CreateRateRequest;
 use App\Http\Requests\FindByIdRateRequest;
 use App\Http\Requests\getRatesRequest;
 use App\Http\Resources\RateResource;
+use Illuminate\Http\Response;
 
 
 use App\Services\RateChartService;

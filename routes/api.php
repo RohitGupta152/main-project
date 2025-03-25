@@ -10,6 +10,8 @@ use App\Http\controllers\RateChartController;
 
 
 
+Route::get('/abc', [StudentsdetailController::class, 'exportStudents']);
+
 Route::prefix('students')->controller(App\Http\Controllers\StudentController::class)->group(function () {
     Route::get('/', 'getAllStudents'); // GET All (Using Params)
     Route::post('/fetch-all', 'fetchAllStudents'); // GET All (Using Payload)
