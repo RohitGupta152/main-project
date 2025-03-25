@@ -28,4 +28,20 @@ class getRatesRequest extends FormRequest
             'created_date' => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2}$/',
         ];
     }
+
+    public function messages(): array 
+    {
+        return[
+            // 'user_id.required' => 'User ID is required', 
+            // 'user_id.numeric' => 'User ID must be a number',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'user_id' => 'Rate chart users id ',
+            'weight' => 'Weight (kg)',
+        ];
+    }
 }

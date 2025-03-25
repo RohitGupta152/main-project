@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CreateRateRequest;
 use App\Http\Requests\FindByIdRateRequest;
 use App\Http\Requests\getRatesRequest;
+use App\Http\Resources\RateResource;
 
 
 use App\Services\RateChartService;
@@ -85,6 +86,11 @@ class RateChartController extends Controller
             'status' => $response['status'],
             'data' => $response['data']
         ], $response['status_code']);
+
+        // return response()->json([
+        //     'status' => $response['status'],
+        //     'data' => RateResource::collection($response['data']),
+        // ], $response['status_code']);        
     }
 
     // public function getRateById(Request $request): JsonResponse
