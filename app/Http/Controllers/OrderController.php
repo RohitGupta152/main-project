@@ -18,52 +18,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 
-
-
-
-class OrderController extends Controller{
-
-    // protected $orderRepository;
-
-    // public function __construct(OrderRepositoryInterface $orderRepository)
-    // {
-    //     $this->orderRepository = $orderRepository;
-    // }
-
-
-    // public function createOrder(CreateOrderRequest $request)
-    // {
-    //     return $this->orderRepository->createOrder($request);
-    // }
-
-    // public function getAllOrders(Request $request)
-    // {
-    //     return $this->orderRepository->getAllOrders();
-    // }
-
-    // public function getOrderById(GetOrderRequest $request)
-    // {
-    //     return $this->orderRepository->getOrderById($request);
-    // }
-
-    // public function getOrdersByEmail(GetOrdersByEmailRequest $request)
-    // {
-    //     return $this->orderRepository->getOrdersByEmail($request);
-    // }
-
-    // public function getOrders(GetOrderRequest $request)
-    // {
-    //     return $this->orderRepository->getOrders($request);
-    // }
-
-
-
-
-
-
-
-
-
+class OrderController extends Controller
+{
     protected $orderService;
 
     public function __construct(OrderService $orderService)
@@ -76,7 +32,7 @@ class OrderController extends Controller{
     {
         // return $this->orderService->createOrder($request);
         // $orderData = $request->only(['order_id', 'user_name', 'email']);
-        
+
         $orderData['user_id'] = Auth::id();
         $orderData['order_no'] = $request['order_id'];
         $orderData['customer_name'] = $request['customer_name'];
@@ -88,7 +44,7 @@ class OrderController extends Controller{
         $orderData['city'] = $request['city'];
         $orderData['state'] = $request['state'];
         $orderData['country'] = $request['country'];
-        
+
         $orderData['weight'] = $request['weight'];
         $orderData['length'] = $request['length'];
         $orderData['width'] = $request['width'];
@@ -104,7 +60,6 @@ class OrderController extends Controller{
         ], $response['status_code']);
     }
 
-
     public function getAllOrders(): JsonResponse
     {
         $response = $this->orderService->getAllOrders();
@@ -114,7 +69,6 @@ class OrderController extends Controller{
             'data' => $response['data']
         ], $response['status_code']);
     }
-
 
     public function getOrders(GetOrderRequest $request): JsonResponse
     {
@@ -133,19 +87,6 @@ class OrderController extends Controller{
         ], $response['status_code']);
     }
 
-
-    // public function getOrdersByEmail(GetOrdersByEmailRequest $request): JsonResponse
-    // {
-    //     $filters = $request->only(['email']);
-    //     $response = $this->orderService->getOrdersByEmail($filters);
-
-    //     return response()->json([
-    //         'status' => $response['status'],
-    //         'data' => $response['data']
-    //     ], $response['status_code']);
-    // }
-
-
     public function getOrdersByEmail(GetOrdersByEmailRequest $request): JsonResponse
     {
         // $email = $request->only(['email']); // ✅ Get email as a string
@@ -158,7 +99,6 @@ class OrderController extends Controller{
             'data' => $response['data']
         ], $response['status_code']);
     }
-
 
     public function updateOrder(updateOrderRequest $request): JsonResponse
     {
@@ -181,7 +121,6 @@ class OrderController extends Controller{
             'message' => $response['message'],
         ], $response['status_code']);
     }
-
 
     public function deleteOrder(DeleteOrderRequest $request): JsonResponse
     {

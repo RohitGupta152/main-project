@@ -10,28 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminOrSubAdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    // public function handle(Request $request, Closure $next)
-    // {
-    //     if (Auth::check() && (Auth::user()->user_type === 1 || Auth::user()->user_type === 2)) {
-    //         return $next($request);
-    //     }
-
-    //     return response()->json(
-    //         [
-    //             'status' => 'error',
-    //             'message' => 'Unauthorized. Admin or Sub-admin access required.'
-    //         ],
-    //         403
-    //     );
-    // }
-
-
-
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user is authenticated
@@ -50,5 +28,4 @@ class AdminOrSubAdminMiddleware
 
         return $next($request);
     }
-
 }

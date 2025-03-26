@@ -11,40 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RateChartRepository implements RateChartRepositoryInterface
 {
-
-    // public function getRateForWeight(float $weight)
-    // {
-    //     // First, try to find an exact match
-    //     $exactMatch = RateChart::where('weight', $weight)->first();
-    //     if ($exactMatch) {
-    //         return $exactMatch;
-    //     }
-
-    //     // If no exact match, find the closest weight ceiling
-    //     $closestHigher = RateChart::where('weight', '>=', $weight)
-    //         ->orderBy('weight', 'asc')
-    //         ->first();
-
-    //     if ($closestHigher) {
-    //         return $closestHigher;
-    //     }
-
-    //     // If no higher weight found, use the highest available weight
-    //     return RateChart::orderBy('weight', 'desc')->first();
-    // }
-
-
-    // public function getRateForWeight(float $weight , int $userId)
-    // {
-    //     // return RateChart::where('weight', '>=', $weight)
-    //     //     ->orderBy('weight', 'asc')
-    //     //     ->first() ?? RateChart::orderBy('weight', 'desc')->first();
-
-    // }
-
-
-
-
     public function getRateForWeight(float $weight, int $userId)
     {
 
@@ -94,13 +60,12 @@ class RateChartRepository implements RateChartRepositoryInterface
         //     ->first();
 
     }
-    
 
     public function getByUserId(int $userId)
     {
         return RateChart::where('user_id', $userId)->get();
     }
-    
+
     public function create(array $data): RateChart
     {
         return RateChart::create($data);
@@ -110,22 +75,14 @@ class RateChartRepository implements RateChartRepositoryInterface
     {
         $query = RateChart::query();
 
-        // Filter by user_id if provided
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }
 
-        // Filter by weight
         if (!empty($filters['weight'])) {
             $query->where('weight', $filters['weight']);
         }
 
-        // Filter by rate amount
-        // if (!empty($filters['rate_amount'])) {
-        //     $query->where('rate_amount', $filters['rate_amount']);
-        // }
-
-        // Filter by created date range
         if (!empty($filters['created_date'])) {
             $dates = explode(' ', $filters['created_date']);
 
@@ -148,45 +105,10 @@ class RateChartRepository implements RateChartRepositoryInterface
     public function updateById(int $rateId, array $updateData): bool
     {
         return RateChart::where('id', $rateId)->update($updateData);
-    }    
+    }
 
     public function deleteById(int $rateId): bool
     {
         return RateChart::where('id', $rateId)->delete();
     }
 }
-
-
-
-// class RateChartRepository implements RateChartRepositoryInterface
-// {
-
-// public function getRateForUser(float $weight)
-//     // {
-//     //     return RateChart::where('weight', '<=', $weight)
-//     //         ->orderBy('weight', 'desc')
-//     //         ->first();
-//     // }
-
-
-//     public function getRateForUser(float $weight)
-//     {
-//         // First, try to find an exact match
-//         $exactMatch = RateChart::where('weight', $weight)->first();
-//         if ($exactMatch) {
-//             return $exactMatch;
-//         }
-
-//         // If no exact match, find the closest weight ceiling
-//         $closestHigher = RateChart::where('weight', '>=', $weight)
-//             ->orderBy('weight', 'asc')
-//             ->first();
-
-//         if ($closestHigher) {
-//             return $closestHigher;
-//         }
-
-//         // If no higher weight found, use the highest available weight
-//         return RateChart::orderBy('weight', 'desc')->first();
-//     }
-// }

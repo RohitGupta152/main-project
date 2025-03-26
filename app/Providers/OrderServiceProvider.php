@@ -18,9 +18,7 @@ use App\Repositories\Interfaces\RateChartRepositoryInterface;
 
 class OrderServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
+
     public function register(): void
     {
         // $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
@@ -30,9 +28,6 @@ class OrderServiceProvider extends ServiceProvider
         $this->app->bind(RateChartRepositoryInterface::class, RateChartRepository::class);
     }
 
-    /**
-     * Bootstrap services.
-     */
     public function boot(): void
     {
         //

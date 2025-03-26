@@ -11,13 +11,15 @@ class Student extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'email', 'age', 'course'
+        'name',
+        'email',
+        'age',
+        'course'
     ];
 
-    // Automatically format timestamps in JSON response
-    // protected $casts = [
-    //     'created_at' => 'datetime:d-m-Y H:i:s',
-    //     'updated_at' => 'datetime:d-m-Y H:i:s',
-    // ];
-    
+    /* //Automatically format timestamps in JSON response
+    protected $casts = [
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s',
+    ]; */
 }

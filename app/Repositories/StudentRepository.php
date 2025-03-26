@@ -4,14 +4,44 @@ namespace App\Repositories;
 
 use App\Models\Student;
 use App\Repositories\Interfaces\StudentRepositoryInterface;
-
 use Illuminate\Http\Request;
+
+
 
 class StudentRepository implements StudentRepositoryInterface
 {
-    public function getAll()
+    public function getAll(array $getData): array
     {
-        return Student::all();
+        // dd($getData);
+
+        $query = student::query();
+
+        if (!empty($getData['user_id'])) {
+            $query->where('id', $getData['user_id']);
+        }
+        // dd($query->get());
+
+        if (!empty($getData['name'])) {
+            $query->where('name', 'LIKE', "%{$getData['name']}%"); //$query->whereIn('order_id', explode(' ', string: $filters['order_id']))
+        }
+
+        if (!empty($getData['email'])) {
+            $query->where('email', 'LIKE', "%{$getData['email']}%");
+        }
+
+        if (!empty($getData['age'])) {
+            $query->where('age',  $getData['age']);
+        }
+
+        if (!empty($getData['course'])) {
+            $query->where('course', 'LIKE', "%{$getData['course']}%");
+        }
+
+        return $query->get()->toArray();
+        // dd($query->get()->toArray());
+
+
+        // return Student::all();
     }
 
     public function findByParam($id)
@@ -63,14 +93,4 @@ class StudentRepository implements StudentRepositoryInterface
     {
         return Student::where('id', $data['id'])->delete() ? true : false;
     }
-
-
-
-    
-    // Query Parameters
-    // public function getData(Request $request): array
-    // {
-    //     return $request->all();
-    // }
-
 }

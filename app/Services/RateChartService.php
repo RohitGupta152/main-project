@@ -9,123 +9,10 @@ use GrahamCampbell\ResultType\Success;
 class RateChartService
 {
     protected $rateChartRepository;
-
     public function __construct(RateChartRepositoryInterface $rateChartRepository)
     {
         $this->rateChartRepository = $rateChartRepository;
     }
-
-
-    // public function createRate(array $data)
-    // {
-    //     $rate = $this->rateChartRepository->create($data);
-
-    //     return [
-    //         'status' => "success",
-    //         'message' => 'Rate created successfully',
-    //         'status_code' => 201,
-    //     ];
-    // }
-
-
-
-    // public function getAllRates()
-    // {
-    //     $rates = $this->rateChartRepository->getAll();
-
-    //     if ($rates->isEmpty()) {
-    //         return [
-    //             'status' => "success",
-    //             // 'message' => 'No rates found.',
-    //             'status_code' => 404,
-    //             'data' => []
-    //         ];
-    //     }
-
-    //     return [
-    //         'status' => "success",
-    //         'status_code' => 200,
-    //         'data' => $rates
-    //     ];
-    // }
-
-
-
-    //     public function createRates(int $userId, array $rateDataArray): array
-    // {
-    //     // Fetch existing rates for the user
-    //     $existingRates = $this->rateChartRepository->getByUserId($userId);
-
-    //     // Extract existing weights manually
-    //     $existingWeights = [];
-    //     foreach ($existingRates as $rate) {
-    //         $existingWeights[] = $rate->weight;
-    //     }
-
-    //     // dd($existingWeights);
-
-
-    //     // Prepare an array to store rounded weights from the payload
-    //     $newWeights = [];
-
-    //     foreach ($rateDataArray as $rateData) {
-    //         $originalWeight = $rateData['weight']; // Store user-entered weight
-
-    //         // Apply rounding logic
-    //         $decimalPart = $originalWeight - floor($originalWeight);
-    //         if ($decimalPart > 0 && $decimalPart <= 0.5) {
-    //             $roundedWeight = floor($originalWeight) + 0.5;
-    //         } elseif ($decimalPart > 0.5) {
-    //             $roundedWeight = ceil($originalWeight);
-    //         } else {
-    //             $roundedWeight = $originalWeight;
-    //         }
-
-    //         // Add to new weights array
-    //         $newWeights[] = $roundedWeight;
-    //     }
-
-    //     // dd($newWeights);
-
-
-    //     // Check for duplicates in the database using array_intersect
-    //     $duplicateWeights = array_intersect($existingWeights, $newWeights);
-    //     dd($duplicateWeights);
-
-    //     if (!empty($duplicateWeights)) {
-    //         return [
-    //             'status' => false,
-    //             'message' => "Rates with weights " . implode(', ', $duplicateWeights) . " already exist for this user.",
-    //             'status_code' => 400
-    //         ];
-    //     }
-
-    //     // Insert rates without transactions
-    //     foreach ($rateDataArray as $rateData) {
-    //         $originalWeight = $rateData['weight'];
-
-    //         // Apply rounding logic again before insertion
-    //         $decimalPart = $originalWeight - floor($originalWeight);
-    //         if ($decimalPart > 0 && $decimalPart <= 0.5) {
-    //             $rateData['weight'] = floor($originalWeight) + 0.5;
-    //         } elseif ($decimalPart > 0.5) {
-    //             $rateData['weight'] = ceil($originalWeight);
-    //         }
-
-    //         // Save each rate using the `create` method
-    //         $this->rateChartRepository->create([
-    //             'user_id' => $userId,
-    //             'weight' => $rateData['weight'],
-    //             'rate_amount' => $rateData['rate_amount'],
-    //         ]);
-    //     }
-
-    //     return [
-    //         'status' => true,
-    //         'message' => 'Rates created successfully.',
-    //         'status_code' => 201
-    //     ];
-    // }
 
 
     public function createRates(int $userId, array $rateDataArray): array
@@ -133,7 +20,6 @@ class RateChartService
         $existingRates = $this->rateChartRepository->getByUserId($userId);
 
         $existingWeights = [];
-        // Convert existing weights to float
         foreach ($existingRates as $rate) {
             $existingWeights[] = (float) $rate['weight'];
         }
@@ -245,56 +131,6 @@ class RateChartService
         ];
     }
 
-    // public function getRateByUserId(array $userId): array
-    // {
-    //     $rate = $this->rateChartRepository->findByUserId($userId);
-
-    //     if (!$rate) {
-    //         return [
-    //             'status' => "error",
-    //             'status_code' => 404,
-    //             'data' => null
-    //         ];
-    //     }
-
-    //     return [
-    //         'status' => "success",
-    //         'status_code' => 200,
-    //         'data' => $rate
-    //     ];
-    // }
-
-
-    // public function updateRate(int $rateId, array $rateData): array
-    // {
-    //     $rate = $this->rateChartRepository->findById($rateId);
-
-    //     if (!$rate) {
-    //         return [
-    //             'status' => "error",
-    //             'message' => 'Rate not found.',
-    //             'status_code' => 404
-    //         ];
-    //     }
-
-    //     $updated = $this->rateChartRepository->updateById($rateId, $rateData);
-
-    //     if (!$updated) {
-    //         return [
-    //             'status' => "error",
-    //             'message' => 'Failed to update rate.',
-    //             'status_code' => 500
-    //         ];
-    //     }
-
-    //     return [
-    //         'status' => "success",
-    //         'message' => 'Rate updated successfully.',
-    //         'status_code' => 200
-    //     ];
-    // }
-
-
     public function updateRate(int $rateId, array $rateData): array
     {
         // Fetch the existing rate by ID
@@ -334,7 +170,7 @@ class RateChartService
             $roundedWeight = $originalWeight;
         }
 
-        
+
         // Check if a rate with the same user_id, rounded weight, and rate_amount already exists
         // foreach ($userRates as $existing) {
         //     if ($existing->weight == $roundedWeight && $existing->rate_amount == $rateData['rate_amount']) {
@@ -412,5 +248,4 @@ class RateChartService
             'status_code' => 200
         ];
     }
-    
 }

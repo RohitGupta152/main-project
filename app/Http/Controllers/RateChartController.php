@@ -10,9 +10,9 @@ use App\Http\Requests\getRatesRequest;
 use App\Http\Resources\RateResource;
 use Illuminate\Http\Response;
 
-
 use App\Services\RateChartService;
 use Illuminate\Http\Request;
+
 
 class RateChartController extends Controller
 {
@@ -22,30 +22,6 @@ class RateChartController extends Controller
     {
         $this->rateChartService = $rateChartService;
     }
-
-    // public function createRate(CreateRateRequest $request): JsonResponse
-    // {
-    //     $rateData['user_id'] = $request['user_id'];
-    //     $rateData['weight'] = $request->input('weight');
-    //     $rateData['rate_amount'] = $request->input('rate_amount');
-
-    //     $response = $this->rateChartService->createRate($rateData);
-
-    //     return response()->json([
-    //         'status' => $response['status'],
-    //         'message' => $response['message'],
-    //     ], $response['status_code']);
-    // }
-
-    // public function getAllRates(): JsonResponse
-    // {
-    //     $response = $this->rateChartService->getAllRates();
-
-    //     return response()->json([
-    //         'status' => $response['status'],
-    //         'data' => $response['data']
-    //     ], $response['status_code']);
-    // }
 
 
     public function createRate(CreateRateRequest $request): JsonResponse
@@ -71,7 +47,6 @@ class RateChartController extends Controller
         ], $response['status_code']);
     }
 
-
     public function getRates(getRatesRequest $request): JsonResponse
     {
         // $userId = (int)($request['user_id'] ?? 0);
@@ -86,27 +61,8 @@ class RateChartController extends Controller
         return response()->json([
             'status' => $response['status'],
             'data' => $response['data']
-        ], $response['status_code']);
-
-        // return response()->json([
-        //     'status' => $response['status'],
-        //     'data' => RateResource::collection($response['data']),
-        // ], $response['status_code']);        
+        ], $response['status_code']);      
     }
-
-    // public function getRateById(Request $request): JsonResponse
-    // {
-    //     // $userId = Auth::id(); // Get logged-in user ID
-    //     $userId['user_id'] = $request->input('user_id');
-
-    //     $response = $this->rateChartService->getRateByUserId($userId);
-
-    //     return response()->json([
-    //         'status' => $response['status'],
-    //         'data' => $response['data']
-    //     ], $response['status_code']);
-    // }
-
 
     public function updateRate(Request $request): JsonResponse
     {
@@ -135,4 +91,5 @@ class RateChartController extends Controller
             'message' => $response['message'],
         ], $response['status_code']);
     }
+    
 }

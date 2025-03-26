@@ -25,13 +25,13 @@ class Order extends Model
     // }
 
     public $timestamps = false;
-    
+
 
     // public function user()
     // {
     //     return $this->belongsTo(User::class, 'user_id', 'id');
     // }
-    
+
 
 
 
@@ -54,7 +54,6 @@ class Order extends Model
         'city',
         'state',
         'country',
-        // 'total_weight',
         'charged_amount',
         'charged_weight',
         'weight',
@@ -69,28 +68,14 @@ class Order extends Model
         'created_date',
         'updated_date'
     ];
-    
+
     public function products()
     {
         return $this->hasMany(Product::class, 'order_table_id');
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-

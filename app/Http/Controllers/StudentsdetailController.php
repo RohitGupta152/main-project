@@ -15,8 +15,6 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 
 class StudentsdetailController extends Controller
 {
-
-    // Normal Ways to Get from Params
     public function getData(Request $request): JsonResponse
     {
         // Retrieve query parameters
@@ -36,23 +34,6 @@ class StudentsdetailController extends Controller
         ], 200);
     }
 
-
-
-
-    //using Repository and Interface and Binding 
-
-    // public function getData(Request $request): JsonResponse
-    // {
-    //     $data = $this->studentRepository->getData($request);
-
-    //     return response()->json([
-    //         'message' => 'Data received successfully',
-    //         'data'  => $data
-    //     ], 200);
-    // }
-
-
-    // A HEAD request is similar to a GET request, but it does not return a response body—only the headers.
     public function headData(Request $request): JsonResponse
     {
         return response()->json([], 200)
@@ -70,15 +51,13 @@ class StudentsdetailController extends Controller
     {
         /* Download excel file in user Request */
         // $students = Student::all();
-
         // return (new FastExcel($students))->download('students.xlsx');
-
 
 
         $students = Student::all();
 
         // Define the file path where the Excel file will be stored
-        $filePath = storage_path('app/public/students.xlsx'); // .csv
+        $filePath = storage_path('app/public/students.csv'); // .csv
 
         // Save the Excel file to the server (storage/app/public/students.xlsx)
         (new FastExcel($students))->export($filePath);
@@ -88,4 +67,5 @@ class StudentsdetailController extends Controller
             'file_path' => asset('storage/students.xlsx')
         ]);
     }
+
 }
