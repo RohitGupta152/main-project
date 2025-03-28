@@ -13,28 +13,26 @@ use App\Repositories\Interfaces\StudentRepositoryInterface;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\OrderService;
+
 
 use Illuminate\Http\Response;
 use Rap2hpoutre\FastExcel\FastExcel;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Student;
-use Illuminate\Database\Eloquent\Casts\Json;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use Maatwebsite\Excel\Concerns\WithTitle;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Services\StudentService;
+
 
 
 class StudentController extends Controller
 {
-    protected $studentRepository;
+    protected $studentService;
 
-    public function __construct(StudentRepositoryInterface $studentRepository)
+    public function __construct(StudentService $studentService)
     {
-        $this->studentRepository = $studentRepository;
+        $this->studentService = $studentService;
     }
 
-    public function getStudents(Request $request)    // GET All (Using Payload)
+
+    public function getStudents(Request $request): JsonResponse    // GET All (Using Payload)
     {
         $getData = [
             'user_id' => $request['user_id'],
@@ -44,44 +42,12 @@ class StudentController extends Controller
             'course'  => $request['course']
         ];
         // dd($getData);
-
-        $getData = $this->getStudentData($getData);
-        $formatStudent = $this->formatStudents($getData);
-
+        $getData = $this->studentService->getStudent($getData);
 
         return response()->json([
-            'status' => 'success',
-            'data'   => $formatStudent
-        ], 200);
-
-        // return $students;
-    }
-
-    protected function getStudentData(array $getData): array
-    {
-        $student = $this->studentRepository->getAll($getData);
-        // dd($student);
-
-        if (empty($student)) {
-            throw new NotFoundHttpException('No students found.');
-        }
-
-        return $student;
-    }
-
-    protected function  formatStudents(array $getData)
-    {
-        $formattedStudents = [];
-        foreach ($getData as $key => $values) {
-            $formattedStudents[$key]['name'] = $values['name'];
-            $formattedStudents[$key]['email'] = $values['email'];
-            $formattedStudents[$key]['age'] = $values['age'] . " years";
-            $formattedStudents[$key]['course'] = $values['course'];
-            $formattedStudents[$key]['created_date'] = date('d M y  h:i A', strtotime($values['created_at']));
-            $formattedStudents[$key]['updated_date'] = date('d M y  h:i A', strtotime($values['updated_at']));
-        }
-
-        return $formattedStudents;
+            'status' => $getData['status'],
+            'data' => $getData['data']
+        ], $getData['status_code']);
     }
 
     public function exportStudent(GetStudentRequest $request)
@@ -94,144 +60,117 @@ class StudentController extends Controller
             'course'  => $request['course']
         ];
 
-        $data = $this->getStudentData($getData);
-        // dd($data);
-        $format = $this->formatStudents($data);
-
-
-        $filePath = storage_path('app/public/filtered_students.csv');
-
-        (new FastExcel($format))->export($filePath);
+        $data = $this->studentService->exportStudent($getData);
 
         return response()->json([
-            'message'   => 'Filtered student data exported successfully!',
-            'file_path' => asset('storage/filtered_students.csv')
+            'message'   => $data['message'],
+            'file_path' => $data['file_path']
         ]);
     }
 
-    public function showStudentByParams($id): JsonResponse // GET (Using Params)
+    public function getStudentsById(showStudentByPayloadRequest $request): JsonResponse
     {
-
-        $student = $this->studentRepository->findByParam($id);
-
-        $formattedStudent = [
-            'id'           => $student->id,
-            'name'         => $student->name,
-            'email'        => $student->email,
-            'age'          => $student->age . " years",
-            'course'       => $student->course,
-            'created_date' => date('d M y  h:i A', strtotime($student->created_at)),
-            'updated_date' => date('d M y  h:i A', strtotime($student->updated_at))
+        $validated = [
+            'id' => $request['id']
         ];
 
-        return $student
-            ? response()->json([
-                'status' => 'success',
-                'data'    => $formattedStudent
-            ], 200)
-
-            : response()->json(['status' => 'error', 'message' => 'No student found with the provided ID.'], 404);
-    }
-
-    public function showStudentByPayload(showStudentByPayloadRequest $request): JsonResponse
-    {
-        $validated = $request->validated();
-        $student = $this->studentRepository->findByPayload($validated);
-
-        return $student
-            ? response()->json([
-                'status' => 'success',
-                'data' => [
-                    'id'           => $student->id,
-                    'name'         => $student->name,
-                    'email'        => $student->email,
-                    'age'          => $student->age . " years",
-                    'course'       => $student->course,
-                    'created_date' => date('d M y  h:i A', strtotime($student->created_at)),
-                    'updated_date' => date('d M y  h:i A', strtotime($student->updated_at))
-                ],
-            ], 200)
-            : response()->json([
-                'status' => 'error',
-                'message' => 'Student not found.'
-            ], 404);
-    }
-
-    public function storeStudent(StudentRequest $request): JsonResponse
-    {
-
-        $data = $request->only(['name', 'email', 'age', 'course']);
-
-        $student = $this->studentRepository->create($data);
+        $students = $this->studentService->getStudentById($validated);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Student Created successfully.'
-        ], 201);
+            'status' => $students['status'],
+            // 'message' => $students['message'],
+            'data' => $students['data']
+        ], $students['status_code']);
+    }
+
+    public function createStudent(StudentRequest $request): JsonResponse
+    {
+        $data = [
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'age' => $request['age'],
+            'course' => $request['course']
+        ];
+
+        $student = $this->studentService->createStudent($data);
+
+        return response()->json([
+            'status' => $student['status'],
+            'message' => $student['message']
+        ], $student['status_code']);
+    }
+
+    public function updateStudent(UpdateStudentByPayloadRequest $request): JsonResponse
+    {
+        // $validated = $request->validated();
+        $validated = [
+            'id' => $request['id'],
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'age' => $request['age'],
+            'course' => $request['course']
+        ];
+
+        $student = $this->studentService->updateStudent($validated);
+
+        return response()->json([
+            'status' => $student['status'],
+            'message' => $student['message']
+        ], $student['status_code']);
+    }
+
+    public function deleteStudent(deleteStudentByPayloadRequest $request): JsonResponse
+    {
+        $validated = $request['id'];
+
+        $student = $this->studentService->deleteStudent($validated);
+
+        return response()->json([
+            'status' => $student['status'],
+            'message' => $student['message']
+        ], $student['status_code']);
+    }
+
+
+
+
+
+    public function getStudentByParams($id): JsonResponse // GET (Using Params)
+    {
+
+        $student = $this->studentService->getStudentByParams($id);
+
+        return response()->json([
+            'status' => $student['status'],
+            'data' => $student['data']
+        ], $student['status_code']);
     }
 
     public function updateStudentByParams(updateStudentRequest $request, $id): JsonResponse   // PUT (Using Params)
     {
 
-        $data = $request->only(['name', 'email', 'age', 'course']);
+        $data = [
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'age' => $request['age'],
+            'course' => $request['course']
+        ];
 
-        $student = $this->studentRepository->updateByParam($id, $data);
-
-        return $student
-            ? response()->json([
-                'status' => 'success',
-                'message' => 'Student updated successfully.'
-            ], 200)
-
-            : response()->json(['status' => 'error', 'message' => 'Student not found.'], 404);
-    }
-
-    public function updateStudentByPayload(UpdateStudentByPayloadRequest $request): JsonResponse
-    {
-        $validated = $request->validated(); // Validate input
-
-        $student = $this->studentRepository->updateByPayload($validated);
-
-        return $student
-            ? response()->json([
-                'status' => 'success',
-                'message' => 'Student updated successfully.'
-            ], 200)
-
-            : response()->json(['status' => 'error', 'message' => 'Student not found.'], 404);
-    }
-
-    public function destroyStudent($id): JsonResponse // DELETE (Using Params)
-    {
-        $deleted = $this->studentRepository->deleteByParams($id);
-
-        return $deleted
-            ? response()->json(['status' => 'success'], 200)
-            : response()->json(['status' => 'error', 'message' => 'Student not found.'], 404);
-    }
-
-    public function destroyStudentByPayload(deleteStudentByPayloadRequest $request): JsonResponse
-    {
-        $validated = $request->validated();
-
-        $student = $this->studentRepository->deleteByPayload($validated);
-
-        return $student
-            ? response()->json(['status' => 'success'], 200)
-            : response()->json(['status' => 'error', 'message' => 'Student not found.'], 404);
-    }
-
-    public function exportStudents($students)
-    {
-        // Define the file path where the CSV file will be stored
-        $filePath = storage_path('app/public/filtered_students.csv');
-
-        // Save the file
-        (new FastExcel($students))->export($filePath);
+        $student = $this->studentService->updateStudentByParams($id, $data);
 
         return response()->json([
-            'message'   => 'Filtered student data exported successfully!',
-            'file_path' => asset('storage/filtered_students.csv')
-        ]);
+            'status' => $student['status'],
+            'message' => $student['message']
+        ], $student['status_code']);
+    }
+
+    public function deleteStudentByParams($id): JsonResponse // DELETE (Using Params)
+    {
+        $deleted = $this->studentService->deleteStudentByParams($id);
+
+        return response()->json([
+            'status' => $deleted['status'],
+            'message' => $deleted['message']
+        ], $deleted['status_code']);
     }
 }

@@ -10,23 +10,23 @@ use App\Http\controllers\RateChartController;
 
 
 
-Route::get('/export', [StudentsdetailController::class, 'exportStudents']);
 
 Route::prefix('students')->controller(App\Http\Controllers\StudentController::class)->group(function () {
     Route::get('/', 'getAllStudents'); // GET All (Using Params)
 
-    Route::post('/get-student', 'getStudents'); // GET All (Using Payload)
-    Route::post('/export-student', 'exportStudent'); // GET All (Using Payload)
-    Route::get('/{id}', 'showStudentByParams'); // Get Student (Using Params)
+    Route::post('/get-student', 'getStudents');
+    Route::post('/export-student', 'exportStudent');
 
-    Route::post('/show', 'showStudentByPayload'); // POST Student (Using Payload)
-    Route::post('/', 'storeStudent'); // Store new Students
+    Route::get('/{id}', 'getStudentByParams');
+    Route::post('/show', 'getStudentsById');
 
-    Route::put('/{id}', 'updateStudentByParams'); // Update the Student (Using Params) 
-    Route::post('/update-student', 'updateStudentByPayload'); // Update the Student (Using payload)
+    Route::post('/', 'createStudent');
 
-    Route::delete('/{id}', 'destroyStudent');
-    Route::post('/delete-student', 'destroyStudentByPayload'); // DELETE using Payload
+    Route::put('/{id}', 'updateStudentByParams');
+    Route::post('/update-student', 'updateStudent');
+
+    Route::delete('/{id}', 'deleteStudentByParams');
+    Route::post('/delete-student', 'deleteStudent');
 });
 
 // Route::put('/update-student', [StudentController::class, 'updateStudentByPayload']);

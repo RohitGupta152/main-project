@@ -49,9 +49,9 @@ class StudentRepository implements StudentRepositoryInterface
         return Student::findOrFail($id);
     }
 
-    public function findByPayload(array $data)
+    public function findByPayload(array $validated)
     {
-        return Student::find($data['id']);
+        return Student::findOrFail($validated['id']);
     }
 
     public function create(array $data)

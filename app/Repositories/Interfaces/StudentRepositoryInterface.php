@@ -8,7 +8,7 @@ interface StudentRepositoryInterface
 {
     public function getAll(array $getData): array;
     public function findByParam($id);
-    public function findByPayload(array $data);
+    public function findByPayload(array $validated);
     public function create(array $data);
     public function updateByParam($id, array $data);
     public function updateByPayload(array $data);
