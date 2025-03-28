@@ -73,7 +73,7 @@ class RateChartRepository implements RateChartRepositoryInterface
 
     public function getRates(array $filters)
     {
-        $query = RateChart::query();
+        $query = RateChart::query()->where('user_id', '!=', 0);;
 
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);

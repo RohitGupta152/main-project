@@ -49,11 +49,8 @@ class RateChartController extends Controller
 
     public function getRates(getRatesRequest $request): JsonResponse
     {
-        // $userId = (int)($request['user_id'] ?? 0);
-
         $filters['user_id'] = $request['user_id']; // Required user_id filter
         $filters['weight'] = $request['weight'];
-        // $filters['rate_amount'] = $request['rate_amount'];
         $filters['created_date'] = $request['created_date'];
 
         $response = $this->rateChartService->getRates($filters);
@@ -61,7 +58,24 @@ class RateChartController extends Controller
         return response()->json([
             'status' => $response['status'],
             'data' => $response['data']
-        ], $response['status_code']);      
+        ], $response['status_code']);
+    }
+
+    public function exportRates(Request $request): JsonResponse
+    {
+        $filters = [
+            'user_id' => $request['user_id'],
+            'weight' => $request['weight'],
+            'created_date' => $request['created_date'],
+        ];
+        // dd($filters);
+
+        $response = $this->rateChartService->exportRates($filters);
+
+        return response()->json([
+            'message'   => $response['message'],
+            'file_path' => $response['file_path']
+        ]);
     }
 
     public function updateRate(Request $request): JsonResponse
@@ -91,5 +105,4 @@ class RateChartController extends Controller
             'message' => $response['message'],
         ], $response['status_code']);
     }
-    
 }

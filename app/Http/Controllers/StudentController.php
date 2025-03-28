@@ -32,7 +32,7 @@ class StudentController extends Controller
     }
 
 
-    public function getStudents(Request $request): JsonResponse    // GET All (Using Payload)
+    public function getStudents(GetStudentRequest $request): JsonResponse    // GET All (Using Payload)
     {
         $getData = [
             'user_id' => $request['user_id'],

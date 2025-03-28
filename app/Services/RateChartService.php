@@ -6,6 +6,17 @@ use App\Repositories\Interfaces\RateChartRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use GrahamCampbell\ResultType\Success;
 
+
+use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Facades\Storage;
+
+use Illuminate\Database\Eloquent\Casts\Json;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 class RateChartService
 {
     protected $rateChartRepository;
@@ -101,34 +112,93 @@ class RateChartService
 
     public function getRates(array $filters): array
     {
-        $rates = $this->rateChartRepository->getRates($filters);
-
-        if ($rates->isEmpty()) {
-            return [
-                'status' => 'success',
-                'data' => [],
-                'status_code' => 200
-            ];
-        }
-
-        $response = [];
-
-        foreach ($rates as $rate) {
-            $rateData = [
-                'user_id' => $rate->user_id,
-                'weight' => $rate->weight,
-                'rate_amount' => $rate->rate_amount,
-                'created_at' => date('d-M-y  h:i A', strtotime($rate->created_at))
-            ];
-
-            $response[] = $rateData;
-        }
+        $getData = $this->getRateData($filters);
+        $formattedRates = $this->formatRates($getData);
 
         return [
             'status' => 'success',
-            'data' => $response,
+            'data' => $formattedRates,
             'status_code' => 200
         ];
+    }
+
+    protected function getRateData(array $filters)
+    {
+        $rate = $this->rateChartRepository->getRates($filters);
+        // dd($student);
+
+        // if (empty($student)) {
+        //     throw new NotFoundHttpException('No students found.');
+        // }
+
+        if ($rate->isEmpty()) {
+            return [];
+        }
+
+        return $rate;
+    }
+
+    private function formatRates($rates): array
+    {
+        $formattedRates = [];
+
+        foreach ($rates as $rate) {
+            $formattedRates[] = [
+                'weight'      => $rate->weight . " Kg",
+                'rate_amount' => $rate->rate_amount . " Rs",
+                'created_at'  => date('d-M-y  h:i A', strtotime($rate->created_at)),
+                'updated_at'  => date('d-M-y  h:i A', strtotime($rate->updated_at))
+            ];
+        }
+
+        return $formattedRates;
+    }
+
+    public function exportRates(array $filters)
+    {
+        $data = $this->getRateData($filters);
+        // dd($data->toArray());
+        $formatData = $this->formatExportRate($data);
+        // dd($formatData);
+
+        $filePath = storage_path('app/public/filtered_Customers.csv');
+
+        $exportData = [];
+        foreach ($formatData as $Customer) {
+            $exportData[] = [
+                'Customer Name' => $Customer['name'],
+                'Customer Email'   => $Customer['email'],
+                'Weight (KG)'     => $Customer['weight'],
+                'Rate Amount' => $Customer['rate_amount'],
+                'Created On'      => $Customer['created_at'],
+                'Updated On'      => $Customer['updated_at']
+            ];
+        }
+
+        (new FastExcel(collect($exportData)))->export($filePath);
+
+        return [
+            'message'   => 'Filtered Customer data exported successfully!',
+            'file_path' => asset('storage/filtered_Customers.csv')
+        ];
+    }
+
+    private function formatExportRate($data): array
+    {
+        $formattedRates = [];
+
+        foreach ($data as $rate) {
+            $formattedRates[] = [
+                'name'        => $rate->user['name'] ?? 'Default Rate',
+                'email'       => $rate->user['email'] ?? ' ',
+                'weight'      => $rate->weight . " Kg",
+                'rate_amount' => $rate->rate_amount . " Rs",
+                'created_at'  => date('d-M-y  h:i A', strtotime($rate->created_at)),
+                'updated_at'  => date('d-M-y  h:i A', strtotime($rate->updated_at))
+            ];
+        }
+
+        return $formattedRates;
     }
 
     public function updateRate(int $rateId, array $rateData): array

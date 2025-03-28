@@ -82,8 +82,10 @@ Route::middleware(['auth:sanctum', 'admin_or_sub-admin'])
     ->prefix('rate')
     ->group(function () {
         Route::post('/create', 'createRate');
-        // Route::post('/get-all', 'getAllRates');
+
         Route::post('/get-rates', 'getRates');
+        Route::post('/export-rates', 'exportRates');
+
         Route::post('/get', 'getRateById');
         Route::post('/update', 'updateRate');
         Route::post('/delete', 'deleteRate');
