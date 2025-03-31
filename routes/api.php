@@ -36,27 +36,36 @@ Route::get('/head-data', [StudentsdetailController::class, 'headData'])->middlew
 
 
 
+Route::prefix('v1')->group(function () {
+    Route::post('/register', [AuthController::class, 'registerUser']);
+    Route::post('/login', [AuthController::class, 'loginUser']);
+    Route::get('/', [AuthController::class, 'test']);
 
-Route::post('/register', [AuthController::class, 'registerUser']);
-Route::post('/login', [AuthController::class, 'loginUser']);
-Route::get('/', [AuthController::class, 'test']);
+    Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::middleware(['auth:sanctum'])->group(function () {
+        Route::controller(AuthController::class)->group(function () {
+            Route::prefix('user')->group(function () {
+                Route::post('/get', 'getUser');
+                Route::post('/update', 'updateUser');
+                Route::post('/logout', 'logoutUser');
+            });
+        });
 
-    Route::post('/user', [AuthController::class, 'getUser']);
-    Route::post('/logout', [AuthController::class, 'logoutUser']);
-    Route::post('/user/update', [AuthController::class, 'updateUser']);
+        Route::prefix('user/order')->controller(OrderController::class)->group(function () {
+            Route::post('/', 'createOrder');
 
-    Route::post('/orders', [OrderController::class, 'createOrder']);
-    Route::post('/get-all-orders', [OrderController::class, 'getAllOrders']);  // Get All Orders (Using Payload) without data {}
-    // Route::post('/get-order-id', [OrderController::class, 'getOrderById']);    // Get Order by ID (Using Payload)
-    Route::post('/get-orders-by-email', [OrderController::class, 'getOrdersByEmail']);
-
-    Route::post('/get-order', [OrderController::class, 'getOrders']);  // GET All (Using Payload with Filters) (All in one)
-
-    Route::post('/update-order', [OrderController::class, 'updateOrder']);
-    Route::post('/delete-order', [OrderController::class, 'deleteOrder']);
+            Route::post('/get-order', 'getOrders'); // (Filters) (All in one)
+            Route::post('/export-order', 'exportOrders');
+            Route::post('/get-active', 'getActiveOrders');
+            Route::post('/cancel-order', 'cancelOrder');
+            
+            // Route::post('/get-by-email', 'getOrdersByEmail');
+            Route::post('/update', 'updateOrder');
+            Route::post('/delete', 'deleteOrder');
+        });
+    });
 });
+
 
 
 // Route::middleware(['auth:sanctum', 'auth.admin'])->group(function () {
@@ -79,14 +88,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'admin_or_sub-admin'])
     ->controller(RateChartController::class)
-    ->prefix('rate')
+    ->prefix('v1/rate')
     ->group(function () {
         Route::post('/create', 'createRate');
 
         Route::post('/get-rates', 'getRates');
         Route::post('/export-rates', 'exportRates');
 
-        Route::post('/get', 'getRateById');
         Route::post('/update', 'updateRate');
         Route::post('/delete', 'deleteRate');
     });

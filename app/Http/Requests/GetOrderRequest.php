@@ -24,7 +24,7 @@ class GetOrderRequest extends FormRequest
         return [
             // 'id' => 'required|integer'
 
-            'order_id' => 'nullable|string', //array
+            'order_no' => 'nullable|string', //array
             'customer_name' => 'nullable|string',
             'created_date' => 'nullable|string|regex:/^\d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2}$/', //regex:/^\d{2} \d{2} \d{4} \d{2} \d{2} \d{4}$/'
         ];

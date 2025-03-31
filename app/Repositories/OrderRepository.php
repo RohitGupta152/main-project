@@ -10,10 +10,9 @@ use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Http\Requests\GetOrderRequest;
 use App\Http\Requests\GetOrdersByEmailRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
-
-
-
+// use Illuminate\Database\Eloquent\Collection;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -406,15 +405,6 @@ class OrderRepository implements OrderRepositoryInterface
             ->get();
     }
 
-    public function getActiveOrders(int $userId)
-    {
-        return Order::with('products')
-            ->where('user_id', $userId)
-            ->get();   //->where('status', 1)->where('is_deleted', 0)
-    }
-
-    
-
     public function getOrders(array $filters, int $userId)
     {
         $query = Order::with('products')->where('user_id', $userId);
@@ -441,11 +431,23 @@ class OrderRepository implements OrderRepositoryInterface
             }
         }
 
-
         // $query->where('status', 1)->where('is_deleted', 0);
 
         return $query->get();
     }
+
+    public function getActiveOrders(int $userId): collection
+    {
+        return Order::with('products')
+            ->where([
+                ['status', '=', 1],
+                ['is_deleted', '=', 0],
+                ['user_id', '=', $userId]
+            ])
+            ->get();   //->where('status', 1)->where('is_deleted', 0)
+    }
+
+
 
 
 
@@ -456,11 +458,16 @@ class OrderRepository implements OrderRepositoryInterface
             ->get();
     }
 
+
+
+
+
+
     public function findOrder(array $orderData, int $userId)
     {
         return Order::where('order_no', $orderData['order_no'])
             ->where('user_id', $userId)
-            ->first();
+            ->get();
     }
 
     public function updateOrder(Order $order, array $orderData)
@@ -488,4 +495,12 @@ class OrderRepository implements OrderRepositoryInterface
         $order->save(); // Ensure save() is used explicitly
     }
 
+    public function updateCancellation(Order $order)
+    {
+        $order->update([
+            'status' => 2,
+            'is_deleted' => 2,
+            'updated_date' => now()
+        ]);
+    }
 }
