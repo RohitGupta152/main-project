@@ -4,9 +4,9 @@ namespace App\Repositories;
 
 use App\Models\Student;
 use App\Repositories\Interfaces\StudentRepositoryInterface;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Carbon;
 
 class StudentRepository implements StudentRepositoryInterface
 {
@@ -56,14 +56,24 @@ class StudentRepository implements StudentRepositoryInterface
 
     public function create(array $data)
     {
+        $data['created_date'] = Carbon::now();
+        $data['updated_date'] = Carbon::now();
         return Student::create($data);
     }
 
     public function updateByParam($id, array $data)   // Using Params
     {
         $student = Student::find($id);
+        
         if ($student) {
-            $student->update($data);
+            $student->update([
+                'name' => $data['name'],
+                'email' =>$data['email'],
+                'age' => $data['age'],
+                'course' => $data['course'],
+                'updated_date' => now(),
+                ]);
+
             return $student;
         }
         return null;
@@ -72,8 +82,16 @@ class StudentRepository implements StudentRepositoryInterface
     public function updateByPayload(array $data)
     {
         $student = Student::find($data['id']);
+        
         if ($student) {
-            $student->update($data);
+            $student->update([
+            'name' => $data['name'],
+            'email' =>$data['email'],
+            'age' => $data['age'],
+            'course' => $data['course'],
+            'updated_date' => now(),
+            ]);
+
             return $student;
         }
         return null;

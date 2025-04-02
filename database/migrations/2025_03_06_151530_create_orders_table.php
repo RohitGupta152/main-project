@@ -50,8 +50,8 @@ return new class extends Migration
             $table->decimal('height', 10, 2)->default(0);
 
             $table->boolean('updated_orders')->default(0);
-            $table->boolean('status')->default(true); // Indicates if the order status is active
-            $table->boolean('is_deleted')->default(false); // Soft delete flag
+            $table->boolean('status')->default(true); // Indicates if the order status is active 1 = True 
+            $table->boolean('is_deleted')->default(false); // Soft delete flag 0 = False
             // $table->timestamps();
             $table->dateTime('created_date')->nullable();
             $table->dateTime('updated_date')->nullable();

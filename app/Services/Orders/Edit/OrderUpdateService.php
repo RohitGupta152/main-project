@@ -36,4 +36,26 @@ class OrderUpdateService
             'status_code' => 200
         ];
     }
+
+    public function updateOrderStatus(array $orderData)
+    {
+        $userId = Auth::id();
+        $order = $this->OrderRepositoryInterface->findOrder($orderData, $userId)->first();
+        // dd($order->toArray());
+        if (!$order) {
+            return [
+                'status' => 'error',
+                'message' => 'Order not found',
+                'status_code' => 404
+            ];
+        }
+
+        $this->OrderRepositoryInterface->updateOrderStatus($order);
+
+        return [
+            'status' => 'success',
+            'message' => 'Order Delivered successfully',
+            'status_code' => 200
+        ];
+    }
 }

@@ -10,11 +10,18 @@ class Student extends Model
 {
     use HasFactory;
 
+    protected $table = 'students';
+
+    public $timestamps = false;
+
+
     protected $fillable = [
         'name',
         'email',
         'age',
-        'course'
+        'course',
+        'created_date',
+        'updated_date'
     ];
 
     /* //Automatically format timestamps in JSON response

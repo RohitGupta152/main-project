@@ -51,7 +51,7 @@ class OrderGetService
         return $orders;
     }
 
-    public function formatOrders($orders): array
+    public function formatOrders($orders): array 
     {
         $formattedOrders = [];
 

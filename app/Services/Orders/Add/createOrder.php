@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 
 
-class createOrder
+class CreateOrder
 {
     protected $OrderRepositoryInterface;
     protected $productRepositoryInterface;
@@ -36,6 +36,7 @@ class createOrder
 
     public function createOrder(array $orderDetails, array $productList)
     {
+        // dd($orderDetails, $productList);
         try {
             DB::beginTransaction();
 

@@ -91,7 +91,7 @@ class StudentController extends Controller
             'age' => $request['age'],
             'course' => $request['course']
         ];
-
+        // dd($data);
         $student = $this->studentService->createStudent($data);
 
         return response()->json([

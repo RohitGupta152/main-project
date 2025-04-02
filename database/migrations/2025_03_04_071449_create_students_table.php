@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->integer('age');
             $table->string('course');
-            $table->timestamps();
+            // $table->timestamps();
+            $table->dateTime('created_date')->nullable();
+            $table->dateTime('updated_date')->nullable();
         });
     }
 

@@ -12,10 +12,14 @@ class RateChart extends Model
 
     protected $table = 'rate_charts';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'weight',
         'rate_amount',
+        'created_date',
+        'updated_date'
     ];
 
     protected $casts = [

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminRegisterRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -24,6 +25,29 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+        ]);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User registration failed',
+            ], 400);
+        }
+
+        // Mail::to($user->email)->send(new WelcomeMail($user));
+
+        return response()->json([
+            'message' => 'User registered successfully. A welcome email has been sent!',
+            'user' => $user,
+        ], 201);
+    }
+
+    public function AdminRegister(AdminRegisterRequest $request): JsonResponse
+    {
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'user_type' => $request->user_type
         ]);
 
         if (!$user) {
@@ -64,7 +88,15 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'token' => $token,
-            'user' => $user
+            'user' => [
+                // 'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'wallet_amount' => $user->wallet_amount,
+                'user_type' => $userTypeMapping[$user->user_type] ?? 'Unknown',
+                'created_at' => $user->created_at->format('d M Y h:i A'),
+                'updated_at' => $user->updated_at->format('d M Y h:i A'),
+            ]
         ], 200);
     }
 
@@ -79,8 +111,35 @@ class AuthController extends Controller
 
     public function getUser(Request $request): JsonResponse
     {
-        // Retrieve and return authenticated user's information
-        return response()->json(['user' => $request->user()], 200);
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not authenticated',
+            ], 401);
+        }
+
+        // Map user_type to readable format
+        $userTypeMapping = [
+            1 => 'Admin',
+            2 => 'Sub-Admin',
+            3 => 'User'
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User retrieved successfully',
+            'user' => [
+                // 'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'wallet_amount' => $user->wallet_amount,
+                'user_type' => $userTypeMapping[$user->user_type] ?? 'Unknown',
+                'created_at' => $user->created_at->format('d M Y h:i A'),
+                'updated_at' => $user->updated_at->format('d M Y h:i A'),
+            ]
+        ], 200);
     }
 
     public function updateUser(Request $request): JsonResponse

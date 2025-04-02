@@ -38,6 +38,7 @@ Route::get('/head-data', [StudentsdetailController::class, 'headData'])->middlew
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'registerUser']);
+    Route::post('/admin-register', [AuthController::class, 'AdminRegister']);
     Route::post('/login', [AuthController::class, 'loginUser']);
     Route::get('/', [AuthController::class, 'test']);
 
@@ -51,20 +52,27 @@ Route::prefix('v1')->group(function () {
             });
         });
 
-        Route::prefix('user/order')->controller(OrderController::class)->group(function () {
-            Route::post('/', 'createOrder');
+        Route::prefix('order')->controller(OrderController::class)->group(function () {
+            Route::post('/create-order', 'createOrder');
 
             Route::post('/get-order', 'getOrders'); // (Filters) (All in one)
             Route::post('/export-order', 'exportOrders');
             Route::post('/get-active', 'getActiveOrders');
-            Route::post('/cancel-order', 'cancelOrder');
-            
+
             // Route::post('/get-by-email', 'getOrdersByEmail');
             Route::post('/update', 'updateOrder');
-            Route::post('/delete', 'deleteOrder');
+            Route::post('/cancel-order', 'updateCancelOrder');
+        });
+    });
+
+    Route::middleware(['auth:sanctum', 'admin_or_sub-admin'])->group(function () {
+        Route::prefix('order')->controller(OrderController::class)->group(function () {
+            Route::post('/order-status', 'updateOrderStatus');
         });
     });
 });
+
+
 
 
 

@@ -9,7 +9,7 @@ use App\Http\Requests\GetOrderRequest;
 use App\Http\Requests\GetOrdersByEmailRequest;
 use App\Http\Requests\updateOrderRequest;
 use App\Http\Requests\deleteOrderRequest;
-use App\Services\Orders\Add\createOrder;
+use App\Services\Orders\Add\CreateOrder;
 use App\Services\Orders\Edit\OrderCancelService;
 use App\Services\OrderService;
 use App\Services\Orders\Get\OrderGetService;
@@ -154,7 +154,7 @@ class OrderController extends Controller
 
     public function createOrder(CreateOrderRequest $request): JsonResponse
     {
-        $createOrder = app(createOrder::class);
+        $createOrder = app(CreateOrder::class);
 
         $orderData['user_id'] = Auth::id();
         $orderData['order_no'] = $request['order_id'];
@@ -250,12 +250,13 @@ class OrderController extends Controller
         ], $response['status_code']);
     }
 
-    public function deleteOrder(DeleteOrderRequest $request): JsonResponse
+    public function updateCancelOrder(Request $request): JsonResponse
     {
-        $OrderDeleteService = app(OrderDeleteService::class);
+        $OrderCancelService = app(OrderCancelService::class);
+
         $orderData['order_no'] = $request['order_no'];
 
-        $response = $OrderDeleteService->deleteOrder($orderData);
+        $response = $OrderCancelService->updateCancelOrder($orderData);
 
         return response()->json([
             'status' => $response['status'],
@@ -263,13 +264,12 @@ class OrderController extends Controller
         ], $response['status_code']);
     }
 
-    public function cancelOrder(Request $request): JsonResponse
+    public function updateOrderStatus(DeleteOrderRequest $request): JsonResponse
     {
-        $OrderCancelService = app(OrderCancelService::class);
-
+        $OrderDeleteService = app(OrderUpdateService::class);
         $orderData['order_no'] = $request['order_no'];
 
-        $response = $OrderCancelService->cancelOrder($orderData);
+        $response = $OrderDeleteService->updateOrderStatus($orderData);
 
         return response()->json([
             'status' => $response['status'],

@@ -487,14 +487,6 @@ class OrderRepository implements OrderRepositoryInterface
         ]);
     }
 
-    public function deleteOrder(Order $order)
-    {
-        $order['is_deleted'] = 1;
-        $order['status'] = 0;
-        $order['updated_date'] = now();
-        $order->save(); // Ensure save() is used explicitly
-    }
-
     public function updateCancellation(Order $order)
     {
         $order->update([
@@ -502,5 +494,13 @@ class OrderRepository implements OrderRepositoryInterface
             'is_deleted' => 2,
             'updated_date' => now()
         ]);
+    }
+
+    public function updateOrderStatus(Order $order)
+    {
+        $order['status'] = 0;
+        $order['is_deleted'] = 1;
+        $order['updated_date'] = now();
+        $order->save(); // Ensure save() is used explicitly
     }
 }

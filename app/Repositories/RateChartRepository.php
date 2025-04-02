@@ -23,7 +23,7 @@ class RateChartRepository implements RateChartRepositoryInterface
 
         // ROHIT ka Code hai 
 
-        /*         $userRates = RateChart::where('user_id', $userId)
+        /*$userRates = RateChart::where('user_id', $userId)
             ->where('weight', $weight)
             ->get();
         // dd($userRates->toArray());
@@ -61,6 +61,7 @@ class RateChartRepository implements RateChartRepositoryInterface
 
     }
 
+
     public function getByUserId(int $userId)
     {
         return RateChart::where('user_id', $userId)->get();
@@ -73,7 +74,7 @@ class RateChartRepository implements RateChartRepositoryInterface
 
     public function getRates(array $filters)
     {
-        $query = RateChart::query()->where('user_id', '!=', 0);;
+        $query = RateChart::query()->where('user_id', '!=', 0);
 
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
@@ -97,14 +98,19 @@ class RateChartRepository implements RateChartRepositoryInterface
         return $query->get();
     }
 
-    public function findById(int $rateId)
+    public function findByRateId(int $rateId)
     {
         return RateChart::find($rateId);
     }
 
     public function updateById(int $rateId, array $updateData): bool
     {
-        return RateChart::where('id', $rateId)->update($updateData);
+        return RateChart::where('id', $rateId)->update([
+            // 'user_id' => $updateData['user_id'], // Not Update this 
+            'weight' => $updateData['weight'],
+            'rate_amount' => $updateData['rate_amount'],
+            'updated_date' => now(),
+        ]);
     }
 
     public function deleteById(int $rateId): bool

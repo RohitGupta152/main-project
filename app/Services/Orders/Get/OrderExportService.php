@@ -56,6 +56,8 @@ class OrderExportService
                 'Length (CM)'     => $order['length'],
                 'Width (CM)'      => $order['width'],
                 'Height (CM)'     => $order['height'],
+                'Order Status'    => $order['status'],
+                'Current Status'  => $order['cancelled'],
                 'Order Date'      => $order['order_date'],
                 'Product Name'    => $order['product_name'],
                 'Price (Rs)'      => $order['price'],
@@ -98,6 +100,14 @@ class OrderExportService
                     'length'          => $isFirstRow ? $order->length . " Cm" : '',
                     'width'           => $isFirstRow ? $order->width . " Cm" : '',
                     'height'          => $isFirstRow ? $order->height . " Cm" : '',
+                    // Corrected status handling
+                    'status'          => $isFirstRow ?
+                        ($order->status == 0 ? 'Order Delivered' : ($order->status == 1 ? 'Order Processing' : 'Order Inactive')) : '',
+
+                    // Corrected is_deleted (cancelled) handling
+                    'cancelled'       => $isFirstRow ?
+                        ($order->is_deleted == 0 ? 'Order Active' : ($order->is_deleted == 1 ? 'Order Completed' : 'Order Cancelled')) : '',
+                        
                     'order_date'      => $isFirstRow ? date('d M y h:i A', strtotime($order->created_date)) : '',
                     'product_name'    => $product->product_name,
                     'price'           => $product->price . " Rs",

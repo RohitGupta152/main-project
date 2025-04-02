@@ -14,8 +14,7 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
-
+use Illuminate\Support\Carbon;
 
 class StudentService
 {
@@ -58,12 +57,13 @@ class StudentService
             $formattedStudents[$key]['email'] = $values['email'];
             $formattedStudents[$key]['age'] = $values['age'] . " years";
             $formattedStudents[$key]['course'] = $values['course'];
-            $formattedStudents[$key]['created_date'] = date('d M y  h:i A', strtotime($values['created_at']));
-            $formattedStudents[$key]['updated_date'] = date('d M y  h:i A', strtotime($values['updated_at']));
+            $formattedStudents[$key]['created_date'] = date('d M y  h:i A', strtotime($values['created_date']));
+            $formattedStudents[$key]['updated_date'] = date('d M y  h:i A', strtotime($values['updated_date']));
         }
 
         return $formattedStudents;
     }
+
 
     public function exportStudent(array $getData)
     {
@@ -107,9 +107,14 @@ class StudentService
         ];
     }
 
+
     public function createStudent(array $data)
     {
+        // $data['created_date'] = Carbon::now();
+        // $data['updated_date'] = Carbon::now();
+
         $student = $this->studentRepositoryInterface->create($data);
+        // dd($student);
 
         if ($student == null) {
             return [
@@ -124,6 +129,7 @@ class StudentService
             'status_code' => 201
         ];
     }
+
 
     public function updateStudent(array $validated)
     {
@@ -144,6 +150,7 @@ class StudentService
         ];
     }
 
+
     public function deleteStudent(array $validated)
     {
         $student = $this->studentRepositoryInterface->deleteByPayload($validated);
@@ -163,6 +170,7 @@ class StudentService
         ];
     }
 
+
     public function getStudentById(array $validated)
     {
         try {
@@ -173,8 +181,8 @@ class StudentService
                 'email' => $student->email,
                 'age' => $student->age,
                 'course' => $student->course,
-                'created_date' => date('d M y  h:i A', strtotime($student->created_at)),
-                'updated_date' => date('d M y  h:i A', strtotime($student->updated_at))
+                'created_date' => date('d M y  h:i A', strtotime($student->created_date)),
+                'updated_date' => date('d M y  h:i A', strtotime($student->updated_date))
 
             ];
 
@@ -207,8 +215,8 @@ class StudentService
                 'email'        => $student->email,
                 'age'          => $student->age . " years",
                 'course'       => $student->course,
-                'created_date' => date('d M y  h:i A', strtotime($student->created_at)),
-                'updated_date' => date('d M y  h:i A', strtotime($student->updated_at))
+                'created_date' => date('d M y  h:i A', strtotime($student->created_date)),
+                'updated_date' => date('d M y  h:i A', strtotime($student->updated_date))
             ];
 
             return [

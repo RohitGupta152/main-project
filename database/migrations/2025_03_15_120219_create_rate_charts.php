@@ -18,7 +18,9 @@ return new class extends Migration
 
             $table->decimal('weight', 4, 1);
             $table->decimal('rate_amount', 10, 2);
-            $table->timestamps();
+            // $table->timestamps();
+            $table->dateTime('created_date')->nullable();
+            $table->dateTime('updated_date')->nullable();
             
             $table->index(['user_id', 'weight']); // Index for faster lookups
 

@@ -19,6 +19,6 @@ interface OrderRepositoryInterface
     public function getOrdersByEmail(string $email, int $userid);
     public function findOrder(array $orderData, int $userId);
     public function updateOrder(Order $order, array $orderData);
-    public function deleteOrder(Order $order);
     public function updateCancellation(Order $order);
+    public function updateOrderStatus(Order $order); // admin or sub-admin can access.
 }

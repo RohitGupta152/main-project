@@ -14,7 +14,7 @@ class OrderCancelService
         $this->OrderRepositoryInterface = $OrderRepositoryInterface;
     }
 
-    public function cancelOrder(array $orderData)
+    public function updateCancelOrder(array $orderData)
     {
         $userId = Auth::id();
         $order = $this->OrderRepositoryInterface->findOrder($orderData, $userId)->first();
